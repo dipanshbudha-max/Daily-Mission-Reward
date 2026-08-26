@@ -16,11 +16,28 @@ function openMission(id){if(current().missions.length>=10&&!id)return alert('Max
 function local(x){let d=new Date(x),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
 function saveMission(e){e.preventDefault();let title=mTitle.value.trim(),pointsN=+mPoints.value,start=new Date(mStart.value),end=new Date(mEnd.value);if(!title||pointsN<1||isNaN(start)||isNaN(end)||end<=start)return alert('Please enter valid mission details.');if(editMissionId){let m=current().missions.find(x=>x.id===editMissionId);if(m.status==='completed')return alert('Completed missions cannot be edited.');Object.assign(m,{title,points:pointsN,start:start.toISOString(),end:end.toISOString()})}else{let nums=current().missions.map(m=>m.number);let n=1;while(nums.includes(n))n++;current().missions.push({id:crypto.randomUUID(),number:n,title,points:pointsN,start:start.toISOString(),end:end.toISOString(),status:'upcoming'})}saveDB();closeModals();render()}
 function deleteMission(id){if(!confirm('Delete this mission?'))return;current().missions=current().missions.filter(m=>m.id!==id);saveDB();render()}
-function completeMission(id){let m=current().missions.find(x=>x.id===id);if(!m)return;let now=Date.now();if(now<new Date(m.start))return alert('Mission has not started yet.');if(now>new Date(m.end)){m.status='expired';saveDB();render();return alert('Mission expired.');}if(m.status!=='active')return; m.status='completed';m.completedAt=new Date().toISOString();current().points+=m.points;current().history.unshift({type:'mission',points:m.points,desc:`Completed: ${m.title}`,date:new Date().toISOString()});saveDB();setCharacter('😄');render()}
+function completeMission(id){let m=current().missions.find(x=>x.id===id);if(!m)return;let now=Date.now();if(now<new Date(m.start))return alert('Mission has not started yet.');if(now>new Date(m.end)){m.status='expired';saveDB();render();return alert('Mission expired.');}if(m.status!=='active')return; m.status='completed';m.completedAt=new Date().toISOString();current().points+=m.points;current().history.unshift({type:'mission',points:m.points,desc:`Completed: ${m.title}`,date:new Date().toISOString()});saveDB();setCharacter('🥳');render()}
 function openReward(){rName.value=current().reward.name;rPoints.value=current().reward.points;rewardModal.classList.add('on')}
 function saveReward(e){e.preventDefault();current().reward.name=rName.value.trim();current().reward.points=Math.max(1,+rPoints.value);current().reward.claimed=false;saveDB();closeModals();render()}
 function claimReward(){let r=current().reward;if(r.claimed)return;if(current().points<r.points)return alert('Not enough points.');if(!confirm(`Claim "${r.name}" for ${r.points} points?`))return;current().points-=r.points;r.claimed=true;current().history.unshift({type:'reward',points:-r.points,desc:`Claimed: ${r.name}`,date:new Date().toISOString()});saveDB();setCharacter('🤩');render();alert('🎉 Final reward claimed!')}
 function showHistory(){history.innerHTML=current().history.length?current().history.map(h=>`<div class="historyrow"><b class="${h.points>=0?'plus':'minus'}">${h.points>=0?'+':''}${h.points}</b><span>${escapeHTML(h.desc)}</span><small>${fmt(h.date)}</small></div>`).join(''):'<p>No point history yet.</p>';historyModal.classList.add('on')}
-function setCharacter(x){character.textContent=x;setTimeout(()=>{if(current())character.textContent='😄'},1800)}
-setInterval(()=>{if(current()){updateStatuses();renderMissions();let active=current().missions.some(m=>m.status==='active');setCharacter(active?'😄':'🙂')}},1000);
+let characterTimer=null;
+function setCharacter(x,duration=3000){
+  clearTimeout(characterTimer);
+  character.textContent=x;
+
+  characterTimer=setTimeout(()=>{
+    if(current()){
+      let active=current().missions.some(m=>m.status==='active');
+      character.textContent=active?'😄':'🙂';
+    }
+  },duration);
+}
+setInterval(()=>{
+  if(current()){
+    updateStatuses();
+    renderMissions();
+  }
+},1000);
+
 render();
