@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Master</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">⌨️ Typing Master</div>
+  <div class="controls">
+    <select id="lang">
+      <option value="english">English</option>
+      <option value="nepali">नेपाली</option>
+    </select>
+    <select id="level">
+      <option value="easy">Easy</option>
+      <option value="normal" selected>Normal</option>
+      <option value="hard">Hard</option>
+    </select>
+    <select id="mins">
+      <option value="60">1 Minute</option>
+      <option value="120">2 Minutes</option>
+      <option value="300">5 Minutes</option>
+    </select>
+    <button id="theme">🌙</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Online Typing Practice</h1>
+    <p>Improve your typing speed and accuracy.</p>
+  </section>
+
+  <section class="stats">
+    <div class="card"><span>Time</span><b id="time">01:00</b></div>
+    <div class="card"><span>WPM</span><b id="wpm">0</b></div>
+    <div class="card"><span>Accuracy</span><b id="acc">100%</b></div>
+    <div class="card"><span>Errors</span><b id="err">0</b></div>
+  </section>
+
+  <section class="typing">
+    <div id="text" class="text"></div>
+    <textarea id="input" placeholder="Click Start Test and type here..."
+      disabled spellcheck="false"></textarea>
+    <button id="start" class="start">▶ Start Test</button>
+  </section>
+
+  <section id="result" class="result" style="display:none">
+    <h2>🎉 Test Complete!</h2>
+    <div class="grid">
+      <div class="card"><span>WPM</span><b id="fw">0</b></div>
+      <div class="card"><span>Accuracy</span><b id="fa">0%</b></div>
+      <div class="card"><span>Errors</span><b id="fe">0</b></div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Typing Master | English + नेपाली</footer>
+<script src="script.js"></script>
+</body>
+</html>
